@@ -22,21 +22,23 @@ namespace Backend.Data
                 .HasKey(gu => new { gu.GroupId, gu.UserId });
 
             modelBuilder.Entity<Message>()
-                .HasOne<MessageType>(m => m.MessageType)
-                .WithMany(mt => mt.Messages)
-                .HasForeignKey(m => m.SendBy);
+                .HasOne<User>(g => g.ToUser)
+                .WithMany(u => u.MessageToUser)
+                .HasForeignKey(g => g.ToUserId);
 
-            modelBuilder.Entity<GroupMessage>()
-                .HasKey(gm => new { gm.GroupId, gm.MessageId });
+            modelBuilder.Entity<Message>()
+                .HasOne<Group>(g => g.ToGroup)
+                .WithMany(u => u.MessageToGroup)
+                .HasForeignKey(g => g.ToGroupId);
 
-            modelBuilder.Entity<MessageUser>()
-                .HasKey(mu => new { mu.MessageId, mu.UserId });
+            modelBuilder.Entity<Message>()
+                .HasOne<User>(g => g.SendByUser)
+                .WithMany(u => u.MessagesOfUser)
+                .HasForeignKey(g => g.SendByUserId);
         }
         public DbSet<User> Users { get; set; }
         public DbSet<Group> Groups { get; set; }
         public DbSet<GroupUser> GroupUsers { get; set; }
         public DbSet<Message> Messages { get; set; }
-        public DbSet<MessageType> MessageTypes { get; set; }
-        public DbSet<GroupMessage> GroupMessages { get; set; }
     }
 }

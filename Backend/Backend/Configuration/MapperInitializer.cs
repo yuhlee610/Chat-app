@@ -14,6 +14,7 @@ namespace Backend.Configuration
         {
             CreateMap<User, UserInputDTO>().ReverseMap();
             CreateMap<Group, GroupInputDTO>().ReverseMap();
+            CreateMap<Message, MessageInputDTO>().ReverseMap();
         }
     }
 }

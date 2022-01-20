@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace Backend.Models
 {
+    public enum Type
+    {
+        ToUser,
+        ToGroup
+    }
     public class Message
     {
         [StringLength(40)]
@@ -13,13 +18,15 @@ namespace Backend.Models
         [StringLength(1000)]
         public string Content { get; set; }
         [StringLength(40)]
-        public string SendBy { get; set; }
+        public string SendByUserId { get; set; }
+        [Required]
+        public Type Type { get; set; }
+        public User SendByUser { get; set; }
         [StringLength(40)]
-        public string TypeId { get; set; }
-        public MessageType MessageType { get; set; }
-        public User User { get; set; }
-        public IList<GroupMessage> GroupMessages { get; set; }
-        public IList<MessageUser> MessageUsers { get; set; }
-
+        public string ToUserId { get; set; }
+        public User ToUser { get; set; }
+        [StringLength(40)]
+        public string ToGroupId { get; set; }
+        public Group ToGroup { get; set; }
     }
 }

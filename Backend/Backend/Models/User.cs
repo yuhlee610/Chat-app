@@ -19,8 +19,9 @@ namespace Backend.Models
         [Required]
         [StringLength(200)]
         public string Email { get; set; }
-        public ICollection<Group> Groups { get; set; }
+        public IList<Group> Groups { get; set; }
         public IList<GroupUser> GroupUsers { get; set; }
-        public IList<MessageUser> MessageUsers { get; set; }
+        public IList<Message> MessageToUser { get; set; }
+        public IList<Message> MessagesOfUser { get; set; }
     }
 }

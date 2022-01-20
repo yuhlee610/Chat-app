@@ -1,6 +1,7 @@
 using Backend.Configuration;
 using Backend.Data;
 using Backend.GraphQL.Groups;
+using Backend.GraphQL.Messages;
 using Backend.GraphQL.Users;
 using Backend.IRepository;
 using Backend.Repository;
@@ -40,11 +41,13 @@ namespace Backend
                     .AddTypeExtension<UserQuery>()
                 .AddMutationType(d => d.Name("Mutation"))
                     .AddTypeExtension<UserMutation>()
-                    .AddTypeExtension<GroupMutation>();
+                    .AddTypeExtension<GroupMutation>()
+                    .AddTypeExtension<MessageMutation>();
 
             services.AddAutoMapper(typeof(MapperInitializer));
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IGroupRepository, GroupRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

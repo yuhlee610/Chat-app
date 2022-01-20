@@ -3,14 +3,16 @@ using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220120055226_deleteMessageType")]
+    partial class deleteMessageType
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -37,6 +39,23 @@ namespace Backend.Migrations
                     b.HasIndex("HostId");
 
                     b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("Backend.Models.GroupMessage", b =>
+                {
+                    b.Property<string>("GroupId")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("MessageId")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.HasKey("GroupId", "MessageId");
+
+                    b.HasIndex("MessageId");
+
+                    b.ToTable("GroupMessages");
                 });
 
             modelBuilder.Entity("Backend.Models.GroupUser", b =>
@@ -66,30 +85,38 @@ namespace Backend.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<string>("SendByUserId")
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
-
-                    b.Property<string>("ToGroupId")
-                        .HasMaxLength(40)
-                        .HasColumnType("nvarchar(40)");
-
-                    b.Property<string>("ToUserId")
+                    b.Property<string>("SendBy")
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(40)");
+
                     b.HasKey("Id");
 
-                    b.HasIndex("SendByUserId");
-
-                    b.HasIndex("ToGroupId");
-
-                    b.HasIndex("ToUserId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Messages");
+                });
+
+            modelBuilder.Entity("Backend.Models.MessageUser", b =>
+                {
+                    b.Property<string>("MessageId")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.Property<string>("UserId")
+                        .HasMaxLength(40)
+                        .HasColumnType("nvarchar(40)");
+
+                    b.HasKey("MessageId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MessageUser");
                 });
 
             modelBuilder.Entity("Backend.Models.User", b =>
@@ -127,6 +154,25 @@ namespace Backend.Migrations
                     b.Navigation("Host");
                 });
 
+            modelBuilder.Entity("Backend.Models.GroupMessage", b =>
+                {
+                    b.HasOne("Backend.Models.Group", "Group")
+                        .WithMany("GroupMessages")
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Backend.Models.Message", "Message")
+                        .WithMany("GroupMessages")
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+
+                    b.Navigation("Message");
+                });
+
             modelBuilder.Entity("Backend.Models.GroupUser", b =>
                 {
                     b.HasOne("Backend.Models.Group", "Group")
@@ -148,30 +194,44 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.Message", b =>
                 {
-                    b.HasOne("Backend.Models.User", "SendByUser")
-                        .WithMany("MessagesOfUser")
-                        .HasForeignKey("SendByUserId");
+                    b.HasOne("Backend.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
-                    b.HasOne("Backend.Models.Group", "ToGroup")
-                        .WithMany("MessageToGroup")
-                        .HasForeignKey("ToGroupId");
+                    b.Navigation("User");
+                });
 
-                    b.HasOne("Backend.Models.User", "ToUser")
-                        .WithMany("MessageToUser")
-                        .HasForeignKey("ToUserId");
+            modelBuilder.Entity("Backend.Models.MessageUser", b =>
+                {
+                    b.HasOne("Backend.Models.Message", "Message")
+                        .WithMany("MessageUsers")
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("SendByUser");
+                    b.HasOne("Backend.Models.User", "User")
+                        .WithMany("MessageUsers")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("ToGroup");
+                    b.Navigation("Message");
 
-                    b.Navigation("ToUser");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Backend.Models.Group", b =>
                 {
-                    b.Navigation("GroupUsers");
+                    b.Navigation("GroupMessages");
 
-                    b.Navigation("MessageToGroup");
+                    b.Navigation("GroupUsers");
+                });
+
+            modelBuilder.Entity("Backend.Models.Message", b =>
+                {
+                    b.Navigation("GroupMessages");
+
+                    b.Navigation("MessageUsers");
                 });
 
             modelBuilder.Entity("Backend.Models.User", b =>
@@ -180,9 +240,7 @@ namespace Backend.Migrations
 
                     b.Navigation("GroupUsers");
 
-                    b.Navigation("MessagesOfUser");
-
-                    b.Navigation("MessageToUser");
+                    b.Navigation("MessageUsers");
                 });
 #pragma warning restore 612, 618
         }

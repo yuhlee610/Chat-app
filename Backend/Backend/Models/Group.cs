@@ -16,6 +16,6 @@ namespace Backend.Models
         public string HostId { get; set; }
         public User Host { get; set; }
         public IList<GroupUser> GroupUsers { get; set; }
-        public IList<GroupMessage> GroupMessages { get; set; }
+        public IList<Message> MessageToGroup { get; set; }
     }
 }

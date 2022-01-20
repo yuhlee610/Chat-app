@@ -3,14 +3,16 @@ using Backend.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Backend.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220120095322_update-database")]
+    partial class updatedatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,7 +68,7 @@ namespace Backend.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("nvarchar(1000)");
 
-                    b.Property<string>("SendByUserId")
+                    b.Property<string>("SendBy")
                         .HasMaxLength(40)
                         .HasColumnType("nvarchar(40)");
 
@@ -81,13 +83,16 @@ namespace Backend.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(40)");
 
-                    b.HasIndex("SendByUserId");
+                    b.HasKey("Id");
 
                     b.HasIndex("ToGroupId");
 
                     b.HasIndex("ToUserId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Messages");
                 });
@@ -148,30 +153,30 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Models.Message", b =>
                 {
-                    b.HasOne("Backend.Models.User", "SendByUser")
-                        .WithMany("MessagesOfUser")
-                        .HasForeignKey("SendByUserId");
-
                     b.HasOne("Backend.Models.Group", "ToGroup")
-                        .WithMany("MessageToGroup")
+                        .WithMany("MessageOfGroup")
                         .HasForeignKey("ToGroupId");
 
                     b.HasOne("Backend.Models.User", "ToUser")
-                        .WithMany("MessageToUser")
+                        .WithMany("MessageOfUser")
                         .HasForeignKey("ToUserId");
 
-                    b.Navigation("SendByUser");
+                    b.HasOne("Backend.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
 
                     b.Navigation("ToGroup");
 
                     b.Navigation("ToUser");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Backend.Models.Group", b =>
                 {
                     b.Navigation("GroupUsers");
 
-                    b.Navigation("MessageToGroup");
+                    b.Navigation("MessageOfGroup");
                 });
 
             modelBuilder.Entity("Backend.Models.User", b =>
@@ -180,9 +185,7 @@ namespace Backend.Migrations
 
                     b.Navigation("GroupUsers");
 
-                    b.Navigation("MessagesOfUser");
-
-                    b.Navigation("MessageToUser");
+                    b.Navigation("MessageOfUser");
                 });
 #pragma warning restore 612, 618
         }
