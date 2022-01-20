@@ -39,10 +39,12 @@ namespace Backend
                 .AddGraphQLServer()
                 .AddQueryType(d => d.Name("Query"))
                     .AddTypeExtension<UserQuery>()
+                    .AddTypeExtension<MessageQuery>()
                 .AddMutationType(d => d.Name("Mutation"))
                     .AddTypeExtension<UserMutation>()
                     .AddTypeExtension<GroupMutation>()
-                    .AddTypeExtension<MessageMutation>();
+                    .AddTypeExtension<MessageMutation>()
+                .AddFiltering();
 
             services.AddAutoMapper(typeof(MapperInitializer));
             services.AddScoped<IUserRepository, UserRepository>();
