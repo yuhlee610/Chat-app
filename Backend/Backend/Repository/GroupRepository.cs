@@ -12,34 +12,43 @@ using System.Threading.Tasks;
 
 namespace Backend.Repository
 {
-    public class UserRepository : IUserRepository
+    public class GroupRepository : IGroupRepository
     {
         private readonly IDbContextFactory<ApplicationDbContext> _contextFactory;
         private readonly IMapper _mapper;
-        public UserRepository(
+        public GroupRepository(
             IDbContextFactory<ApplicationDbContext> contextFactory,
             IMapper mapper)
         {
             _mapper = mapper;
             _contextFactory = contextFactory;
         }
-        public async Task<User> CreateUser(UserInputDTO userInput)
+        public async Task<Group> CreateGroup(GroupInputDTO groupInput)
         {
             using(ApplicationDbContext context = _contextFactory.CreateDbContext())
             {
                 try
                 {
-                    if (await context.Users.AnyAsync(u => u.Email == userInput.Email))
+                    var groupAdd = _mapper.Map<Group>(groupInput);
+                    groupAdd.GroupUsers = new List<GroupUser>();
+                    foreach (string userId in groupInput.GroupUserIds)
                     {
-                        throw new GraphQLException(new Error("Account exists", "ACCOUNT_EXISTS"));
+                        groupAdd.GroupUsers.Add(new GroupUser
+                        {
+                            UserId = userId
+                        });
                     }
 
-                    var userAdd = _mapper.Map<User>(userInput);
-                    await context.AddAsync(userAdd);
+                    await context.Groups.AddAsync(groupAdd);
                     await context.SaveChangesAsync();
-                    return userAdd;
+
+                    var groupAdded = await context.Groups
+                        .Include("Host").Where(g => g.Id == groupAdd.Id)
+                        .FirstOrDefaultAsync();
+
+                    return groupAdded;
                 }
-                catch
+                catch(Exception ex)
                 {
                     throw new GraphQLException(new Error("Server errors", "SERVER_ERRORS"));
                 }

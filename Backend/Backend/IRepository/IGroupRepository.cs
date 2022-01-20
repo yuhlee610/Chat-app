@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace Backend.IRepository
 {
-    public interface IUserRepository
+    public interface IGroupRepository
     {
-        Task<User> CreateUser(UserInputDTO user);
+        Task<Group> CreateGroup(GroupInputDTO groupInput);
     }
 }

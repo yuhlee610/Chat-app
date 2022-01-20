@@ -13,6 +13,7 @@ namespace Backend.Configuration
         public MapperInitializer()
         {
             CreateMap<User, UserInputDTO>().ReverseMap();
+            CreateMap<Group, GroupInputDTO>().ReverseMap();
         }
     }
 }

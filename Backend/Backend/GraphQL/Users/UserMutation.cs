@@ -1,4 +1,5 @@
 ﻿using Backend.DTOs;
+using Backend.IRepository;
 using Backend.Models;
 using Backend.Repository;
 using HotChocolate.Types;
@@ -12,10 +13,10 @@ namespace Backend.GraphQL.Users
     [ExtendObjectType(Name = "Mutation")]
     public class UserMutation
     {
-        private readonly UserRepository _userRepository;
-        public UserMutation(UserRepository userRepository)
+        private readonly IUserRepository _userRepository;
+        public UserMutation(IUserRepository userRepository)
         {
-            _userRepository = userRepository;
+            this._userRepository = userRepository;
         }
         public async Task<User> CreateUser(UserInputDTO userInput) => 
             await _userRepository.CreateUser(userInput);
