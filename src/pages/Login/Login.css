@@ -1,0 +1,54 @@
+.login-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 25px;
+  height: calc(100vh - 50px);
+}
+
+.login-wrapper .login-left img {
+  height: 100%;
+}
+
+.login-wrapper .login-left img:last-child {
+  height: calc(100% - 100px);
+  position: absolute;
+  top: 40px;
+  left: 50px;
+}
+
+.login-wrapper .login-right {
+  margin: auto;
+}
+
+.login-wrapper .login-right .name {
+  min-width: 1px;
+  font-size: 70px;
+  font-weight: 700;
+  border-right: 10px solid;
+  -webkit-animation: blink-caret .75s step-end infinite;
+          animation: blink-caret .75s step-end infinite;
+}
+
+.login-wrapper .login-right .name span {
+  visibility: hidden;
+}
+
+/* The typewriter cursor effect */
+@-webkit-keyframes blink-caret {
+  from, to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: orange;
+  }
+}
+@keyframes blink-caret {
+  from, to {
+    border-color: transparent;
+  }
+  50% {
+    border-color: orange;
+  }
+}
+/*# sourceMappingURL=Login.css.map */

@@ -1,0 +1,35 @@
+.login-wrapper {
+  display: flex;
+  padding: 25px;
+  height: calc(100vh - 50px);
+  .login-left {
+    img {
+      height: 100%;
+    }
+    img:last-child {
+      height: calc(100% - 100px);
+      position: absolute;
+      top: 40px;
+      left: 50px;
+    }
+  }
+  .login-right {
+      margin: auto;
+      .name {
+          min-width: 1px;
+          font-size: 70px;
+          font-weight: 700;
+          border-right: 10px solid;
+          animation: blink-caret .75s step-end infinite;
+          span {
+              visibility: hidden;
+          }
+      }
+  }
+}
+
+/* The typewriter cursor effect */
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: orange; }
+  }
