@@ -10,5 +10,6 @@ namespace Backend.IRepository
     public interface IUserRepository
     {
         Task<User> CreateUser(UserInputDTO user);
+        Task<GroupAndUserContacted> GetContactedUser(string userId);
     }
 }

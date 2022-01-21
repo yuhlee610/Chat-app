@@ -25,7 +25,7 @@ namespace Backend.Repository
         }
         public async Task<User> CreateUser(UserInputDTO userInput)
         {
-            using(ApplicationDbContext context = _contextFactory.CreateDbContext())
+            using (ApplicationDbContext context = _contextFactory.CreateDbContext())
             {
                 try
                 {
@@ -40,6 +40,55 @@ namespace Backend.Repository
                     return userAdd;
                 }
                 catch
+                {
+                    throw new GraphQLException(new Error("Server errors", "SERVER_ERRORS"));
+                }
+            }
+        }
+
+        public async Task<GroupAndUserContacted> GetContactedUser(string userId)
+        {
+            using (ApplicationDbContext context = _contextFactory.CreateDbContext())
+            {
+                try
+                {
+                    //List<Message> messagesBetweenUser = await context.Messages
+                    //    .Where(m => (m.SendByUserId == userId || m.ToUserId == userId) && m.Type == Models.Type.ToUser)
+                    //    .Include("ToUser").Include("SendByUser")
+                    //    .ToListAsync();
+                    //List<User> contactedUser = new List<User>();
+                    //foreach (var message in messagesBetweenUser)
+                    //{
+                    //    if (!contactedUser.Any(u => u.Id == message.ToUser.Id) && message.ToUser.Id != userId)
+                    //    {
+                    //        contactedUser.Add(message.ToUser);
+                    //    }
+                    //    if (!contactedUser.Any(u => u.Id == message.SendByUser.Id) && message.SendByUser.Id != userId)
+                    //    {
+                    //        contactedUser.Add(message.SendByUser);
+                    //    }
+                    //}
+                    List<String> messagesBetweenUserId = await (from m in context.Messages
+                                                        where m.Type == Models.Type.ToUser && m.SendByUserId == userId
+                                                        select m.ToUserId)
+                                                        .Union(from m in context.Messages
+                                                               where m.Type == Models.Type.ToUser && m.ToUserId == userId
+                                                               select m.SendByUserId).ToListAsync();
+
+                    List<User> contactedUsers = await context.Users
+                        .Where(u => messagesBetweenUserId.Contains(u.Id))
+                        .ToListAsync();
+
+                    List<Group> contactedGroups = await context.Groups
+                        .Where(g => g.GroupUsers.Where(gu => gu.UserId == userId).Any())
+                        .ToListAsync();
+
+                    return new GroupAndUserContacted() { 
+                        ContactedUsers = contactedUsers,
+                        ContactedGroups = contactedGroups
+                    };
+                }
+                catch (Exception ex)
                 {
                     throw new GraphQLException(new Error("Server errors", "SERVER_ERRORS"));
                 }

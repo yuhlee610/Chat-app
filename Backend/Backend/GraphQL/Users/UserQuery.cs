@@ -1,4 +1,8 @@
-﻿using Backend.Models;
+﻿using Backend.Data;
+using Backend.IRepository;
+using Backend.Models;
+using HotChocolate;
+using HotChocolate.Data;
 using HotChocolate.Types;
 using System;
 using System.Collections.Generic;
@@ -10,6 +14,12 @@ namespace Backend.GraphQL.Users
     [ExtendObjectType(Name = "Query")]
     public class UserQuery
     {
-        public User GetUser() => new User();
+        private readonly IUserRepository _userRepository;
+        public UserQuery(IUserRepository userRepository)
+        {
+            _userRepository = userRepository;
+        }
+        public async Task<GroupAndUserContacted> GetContactedUser(string idUser)
+            => await _userRepository.GetContactedUser(idUser);
     }
 }
