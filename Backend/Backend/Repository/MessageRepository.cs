@@ -31,14 +31,33 @@ namespace Backend.Repository
                 {
                     Message messageAdd = new Message();
                     messageAdd = _mapper.Map<Message>(messageInput);
+                    messageAdd.Date = DateTime.UtcNow;
+                    messageAdd.IsLatest = true;
+
+                    Message latestMessage = new Message();
+
                     if (Models.Type.ToGroup.CompareTo(messageInput.Type) == 0)
                     {
                         messageAdd.ToGroupId = messageInput.GroupOrUserId;
-                        
-                    }
+                        latestMessage = await context.Messages
+                            .Where(m => (m.ToGroupId == messageInput.GroupOrUserId &&
+                            m.IsLatest == true))
+                            .FirstOrDefaultAsync();
+                                            }
                     else if (Models.Type.ToUser.CompareTo(messageInput.Type) == 0)
                     {
                         messageAdd.ToUserId = messageInput.GroupOrUserId;
+                        latestMessage = await context.Messages
+                            .Where(m => (m.SendByUserId == messageInput.SendByUserId
+                            || m.SendByUserId == messageInput.GroupOrUserId) &&
+                            (m.ToUserId == messageInput.SendByUserId ||
+                            m.ToUserId == messageInput.GroupOrUserId) && m.IsLatest == true)
+                            .FirstOrDefaultAsync();
+                    }
+                    if(latestMessage != null)
+                    {
+                        latestMessage.IsLatest = false;
+                        context.Messages.Update(latestMessage);
                     }
                     await context.Messages.AddAsync(messageAdd);
                     await context.SaveChangesAsync();

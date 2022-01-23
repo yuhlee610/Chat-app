@@ -52,41 +52,49 @@ namespace Backend.Repository
             {
                 try
                 {
-                    //List<Message> messagesBetweenUser = await context.Messages
-                    //    .Where(m => (m.SendByUserId == userId || m.ToUserId == userId) && m.Type == Models.Type.ToUser)
-                    //    .Include("ToUser").Include("SendByUser")
-                    //    .ToListAsync();
-                    //List<User> contactedUser = new List<User>();
-                    //foreach (var message in messagesBetweenUser)
-                    //{
-                    //    if (!contactedUser.Any(u => u.Id == message.ToUser.Id) && message.ToUser.Id != userId)
-                    //    {
-                    //        contactedUser.Add(message.ToUser);
-                    //    }
-                    //    if (!contactedUser.Any(u => u.Id == message.SendByUser.Id) && message.SendByUser.Id != userId)
-                    //    {
-                    //        contactedUser.Add(message.SendByUser);
-                    //    }
-                    //}
-                    List<String> messagesBetweenUserId = await (from m in context.Messages
-                                                        where m.Type == Models.Type.ToUser && m.SendByUserId == userId
-                                                        select m.ToUserId)
-                                                        .Union(from m in context.Messages
-                                                               where m.Type == Models.Type.ToUser && m.ToUserId == userId
-                                                               select m.SendByUserId).ToListAsync();
+                    GroupAndUserContacted result = new GroupAndUserContacted();
 
-                    List<User> contactedUsers = await context.Users
-                        .Where(u => messagesBetweenUserId.Contains(u.Id))
+                    List<Message> messageLatestUser = await context.Messages
+                        .Where(m => m.IsLatest == true && m.Type == Models.Type.ToUser && (
+                        m.SendByUserId == userId || m.ToUserId == userId)).OrderBy(m => m.Date)
                         .ToListAsync();
 
-                    List<Group> contactedGroups = await context.Groups
-                        .Where(g => g.GroupUsers.Where(gu => gu.UserId == userId).Any())
-                        .ToListAsync();
+                    foreach(var message in messageLatestUser)
+                    {
+                        User user = new User();
+                        if(message.ToUserId != userId)
+                        {
+                            user = await context.Users.FindAsync(message.ToUserId);
+                        }
+                        if(message.SendByUserId != userId)
+                        {
+                            user = await context.Users.FindAsync(message.SendByUserId);
+                        }
+                        result.ContactedUsers.Add(new UserContacted()
+                        {
+                            User = user,
+                            LatestMessage = message
+                        });
+                    }
 
-                    return new GroupAndUserContacted() { 
-                        ContactedUsers = contactedUsers,
-                        ContactedGroups = contactedGroups
-                    };
+                    List<Message> messageLatestGroup = await context.Messages
+                        .Where(m => m.Type == Models.Type.ToGroup && m.IsLatest == true &&
+                        m.ToGroup.GroupUsers.Contains(new GroupUser()
+                        {
+                            GroupId = m.ToGroupId,
+                            UserId = userId
+                        })).Include("ToGroup").OrderBy(m => m.Date).ToListAsync();
+
+                    foreach(var message in messageLatestGroup)
+                    {
+                        result.ContactedGroups.Add(new GroupContacted()
+                        {
+                            Group = message.ToGroup,
+                            LatestMessage = message
+                        });
+                    }
+
+                    return result;
                 }
                 catch (Exception ex)
                 {

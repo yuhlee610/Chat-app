@@ -7,7 +7,12 @@ namespace Backend.Models
 {
     public class GroupAndUserContacted
     {
-        public List<User> ContactedUsers { get; set; }
-        public List<Group> ContactedGroups { get; set; }
+        public GroupAndUserContacted()
+        {
+            ContactedGroups = new List<GroupContacted>();
+            ContactedUsers = new List<UserContacted>();
+        }
+        public List<UserContacted> ContactedUsers { get; set; }
+        public List<GroupContacted> ContactedGroups { get; set; }
     }
 }

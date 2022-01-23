@@ -19,7 +19,7 @@ namespace Backend.GraphQL.Users
         {
             _userRepository = userRepository;
         }
-        public async Task<GroupAndUserContacted> GetContactedUser(string idUser)
+        public async Task<GroupAndUserContacted> GetContactedUsersAndGroups(string idUser)
             => await _userRepository.GetContactedUser(idUser);
     }
 }

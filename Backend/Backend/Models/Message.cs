@@ -28,5 +28,7 @@ namespace Backend.Models
         [StringLength(40)]
         public string ToGroupId { get; set; }
         public Group ToGroup { get; set; }
+        public DateTime Date { get; set; }
+        public bool IsLatest { get; set; }
     }
 }
