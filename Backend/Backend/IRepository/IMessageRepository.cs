@@ -9,6 +9,6 @@ namespace Backend.IRepository
 {
     public interface IMessageRepository
     {
-        Task<Message> CreateMessage(MessageInputDTO messageInput);
+        Task<Message> CreateMessage(AddMessagePayload messageInput);
     }
 }

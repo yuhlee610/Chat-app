@@ -5,6 +5,6 @@
   </PropertyGroup>
   <ImportGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
     <Import Project="$(NuGetPackageRoot)hotchocolate.data.entityframework\12.4.1\build\HotChocolate.Data.EntityFramework.targets" Condition="Exists('$(NuGetPackageRoot)hotchocolate.data.entityframework\12.4.1\build\HotChocolate.Data.EntityFramework.targets')" />
-    <Import Project="$(NuGetPackageRoot)hotchocolate.aspnetcore\12.4.1\build\HotChocolate.AspNetCore.targets" Condition="Exists('$(NuGetPackageRoot)hotchocolate.aspnetcore\12.4.1\build\HotChocolate.AspNetCore.targets')" />
+    <Import Project="$(NuGetPackageRoot)hotchocolate.aspnetcore\12.5.0\build\HotChocolate.AspNetCore.targets" Condition="Exists('$(NuGetPackageRoot)hotchocolate.aspnetcore\12.5.0\build\HotChocolate.AspNetCore.targets')" />
   </ImportGroup>
 </Project>

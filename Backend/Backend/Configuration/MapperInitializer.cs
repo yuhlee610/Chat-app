@@ -12,9 +12,9 @@ namespace Backend.Configuration
     {
         public MapperInitializer()
         {
-            CreateMap<User, UserInputDTO>().ReverseMap();
-            CreateMap<Group, GroupInputDTO>().ReverseMap();
-            CreateMap<Message, MessageInputDTO>().ReverseMap();
+            CreateMap<User, AddUserPayload>().ReverseMap();
+            CreateMap<Group, AddGroupPlayload>().ReverseMap();
+            CreateMap<Message, AddMessagePayload>().ReverseMap();
         }
     }
 }

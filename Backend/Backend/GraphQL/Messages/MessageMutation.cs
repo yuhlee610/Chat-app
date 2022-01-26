@@ -1,6 +1,7 @@
 ﻿using Backend.DTOs;
 using Backend.IRepository;
 using Backend.Models;
+using HotChocolate;
 using HotChocolate.Types;
 using System;
 using System.Collections.Generic;
@@ -12,13 +13,8 @@ namespace Backend.GraphQL.Messages
     [ExtendObjectType(Name = "Mutation")]
     public class MessageMutation
     {
-        private readonly IMessageRepository _messageRepository;
-        public MessageMutation(IMessageRepository messageRepository)
-        {
-            _messageRepository = messageRepository;
-        }
-
-        public async Task<Message> CreateMessage(MessageInputDTO messageInput)
-            => await _messageRepository.CreateMessage(messageInput);
+        public async Task<Message> CreateMessage(
+            AddMessagePayload messageInput, [Service] IMessageRepository messageRepository)
+            => await messageRepository.CreateMessage(messageInput);
     }
 }

@@ -7,7 +7,7 @@ using Backend.Models;
 
 namespace Backend.DTOs
 {
-    public class MessageInputDTO
+    public class AddMessagePayload
     {
         [Required]
         [StringLength(1000)]

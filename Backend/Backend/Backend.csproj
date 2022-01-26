@@ -7,8 +7,10 @@
 	<ItemGroup>
 		<PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
 		<PackageReference Include="GraphQL.Server.Ui.Voyager" Version="5.2.0" />
-		<PackageReference Include="HotChocolate.AspNetCore" Version="12.4.1" />
+		<PackageReference Include="HotChocolate.AspNetCore" Version="12.5.0" />
+		<PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="12.5.0" />
 		<PackageReference Include="HotChocolate.Data.EntityFramework" Version="12.4.1" />
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.13" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.13">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -18,5 +20,6 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.15.1" />
 	</ItemGroup>
 </Project>

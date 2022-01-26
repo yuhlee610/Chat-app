@@ -4,6 +4,7 @@ using Backend.DTOs;
 using Backend.IRepository;
 using Backend.Models;
 using HotChocolate;
+using HotChocolate.Subscriptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,7 @@ namespace Backend.Repository
             _mapper = mapper;
             _contextFactory = contextFactory;
         }
-        public async Task<Group> CreateGroup(GroupInputDTO groupInput)
+        public async Task<Group> CreateGroup(AddGroupPlayload groupInput, ITopicEventSender eventSender)
         {
             using(ApplicationDbContext context = _contextFactory.CreateDbContext())
             {
@@ -46,9 +47,49 @@ namespace Backend.Repository
                         .Include("Host").Where(g => g.Id == groupAdd.Id)
                         .FirstOrDefaultAsync();
 
+                    string groupCreatedTopic = "";
+                    foreach(var id in groupInput.GroupUserIds)
+                    {
+                        groupCreatedTopic = $"{id}_{nameof(GraphQL.Groups.GroupSubscription.GroupCreated)}";
+                        eventSender.SendAsync(groupCreatedTopic, groupAdded);
+                    }
+
                     return groupAdded;
                 }
                 catch(Exception ex)
+                {
+                    throw new GraphQLException(new Error("Server errors", "SERVER_ERRORS"));
+                }
+            }
+        }
+
+        public async Task<List<ContactGroup>> GetContactGroups(string userId)
+        {
+            using (ApplicationDbContext context = _contextFactory.CreateDbContext())
+            {
+                try
+                {
+                    List<ContactGroup> contactGroups = new List<ContactGroup>();
+                    List<Message> messageLatestGroup = await context.Messages
+                            .Where(m => m.Type == Models.Type.ToGroup && m.IsLatest == true &&
+                            m.ToGroup.GroupUsers.Contains(new GroupUser()
+                            {
+                                GroupId = m.ToGroupId,
+                                UserId = userId
+                            })).Include("ToGroup").Include(g => g.ToGroup.GroupUsers).OrderBy(m => m.Date).ToListAsync();
+
+                    foreach (var message in messageLatestGroup)
+                    {
+                        contactGroups.Add(new ContactGroup()
+                        {
+                            Group = message.ToGroup,
+                            LatestMessage = message,
+                            numOfMembers = message.ToGroup.GroupUsers.Count
+                        });
+                    }
+                    return contactGroups;
+                }
+                catch (Exception ex)
                 {
                     throw new GraphQLException(new Error("Server errors", "SERVER_ERRORS"));
                 }

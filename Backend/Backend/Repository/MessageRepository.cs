@@ -23,7 +23,7 @@ namespace Backend.Repository
             _mapper = mapper;
             _contextFactory = contextFactory;
         }
-        public async Task<Message> CreateMessage(MessageInputDTO messageInput)
+        public async Task<Message> CreateMessage(AddMessagePayload messageInput)
         {
             using (ApplicationDbContext context = _contextFactory.CreateDbContext())
             {

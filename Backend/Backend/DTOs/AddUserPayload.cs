@@ -6,14 +6,16 @@ using System.Threading.Tasks;
 
 namespace Backend.DTOs
 {
-    public class GroupInputDTO
+    public class AddUserPayload
     {
         [Required]
         [StringLength(200)]
         public string Name { get; set; }
         [Required]
-        [StringLength(40)]
-        public string HostId { get; set; }
-        public IList<string> GroupUserIds { get; set; }
+        [StringLength(400)]
+        public string ImageUrl { get; set; }
+        [Required]
+        [StringLength(200)]
+        public string Email { get; set; }
     }
 }

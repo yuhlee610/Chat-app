@@ -23,7 +23,7 @@ namespace Backend.Repository
             _mapper = mapper;
             _contextFactory = contextFactory;
         }
-        public async Task<User> CreateUser(UserInputDTO userInput)
+        public async Task<User> CreateUser(AddUserPayload userInput)
         {
             using (ApplicationDbContext context = _contextFactory.CreateDbContext())
             {
@@ -31,7 +31,7 @@ namespace Backend.Repository
                 {
                     if (await context.Users.AnyAsync(u => u.Email == userInput.Email))
                     {
-                        throw new GraphQLException(new Error("Account exists", "ACCOUNT_EXISTS"));
+                        return await context.Users.Where(u => u.Email == userInput.Email).FirstOrDefaultAsync();
                     }
 
                     var userAdd = _mapper.Map<User>(userInput);
@@ -46,55 +46,51 @@ namespace Backend.Repository
             }
         }
 
-        public async Task<GroupAndUserContacted> GetContactedUser(string userId)
+        public async Task<List<ContactUser>> GetContactUsers(string userId)
         {
             using (ApplicationDbContext context = _contextFactory.CreateDbContext())
             {
                 try
                 {
-                    GroupAndUserContacted result = new GroupAndUserContacted();
+                    List<ContactUser> contactUsers = new List<ContactUser>();
 
                     List<Message> messageLatestUser = await context.Messages
-                        .Where(m => m.IsLatest == true && m.Type == Models.Type.ToUser && (
-                        m.SendByUserId == userId || m.ToUserId == userId)).OrderBy(m => m.Date)
-                        .ToListAsync();
-
-                    foreach(var message in messageLatestUser)
+                            .Where(m => m.IsLatest == true && m.Type == Models.Type.ToUser && (
+                            m.SendByUserId == userId || m.ToUserId == userId)).OrderBy(m => m.Date)
+                            .ToListAsync();
+                    foreach (var message in messageLatestUser)
                     {
                         User user = new User();
-                        if(message.ToUserId != userId)
+                        if (message.ToUserId != userId)
                         {
                             user = await context.Users.FindAsync(message.ToUserId);
                         }
-                        if(message.SendByUserId != userId)
+                        if (message.SendByUserId != userId)
                         {
                             user = await context.Users.FindAsync(message.SendByUserId);
                         }
-                        result.ContactedUsers.Add(new UserContacted()
+                        contactUsers.Add(new ContactUser()
                         {
                             User = user,
                             LatestMessage = message
                         });
                     }
+                    return contactUsers;
+                }
+                catch (Exception ex)
+                {
+                    throw new GraphQLException(new Error("Server errors", "SERVER_ERRORS"));
+                }
+            }
+        }
 
-                    List<Message> messageLatestGroup = await context.Messages
-                        .Where(m => m.Type == Models.Type.ToGroup && m.IsLatest == true &&
-                        m.ToGroup.GroupUsers.Contains(new GroupUser()
-                        {
-                            GroupId = m.ToGroupId,
-                            UserId = userId
-                        })).Include("ToGroup").OrderBy(m => m.Date).ToListAsync();
-
-                    foreach(var message in messageLatestGroup)
-                    {
-                        result.ContactedGroups.Add(new GroupContacted()
-                        {
-                            Group = message.ToGroup,
-                            LatestMessage = message
-                        });
-                    }
-
-                    return result;
+        public async Task<List<User>> GetUsers()
+        {
+            using (ApplicationDbContext context = _contextFactory.CreateDbContext())
+            {
+                try
+                {
+                    return await context.Users.ToListAsync();
                 }
                 catch (Exception ex)
                 {

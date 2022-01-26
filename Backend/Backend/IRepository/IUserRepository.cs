@@ -9,7 +9,8 @@ namespace Backend.IRepository
 {
     public interface IUserRepository
     {
-        Task<User> CreateUser(UserInputDTO user);
-        Task<GroupAndUserContacted> GetContactedUser(string userId);
+        Task<User> CreateUser(AddUserPayload user);
+        Task<List<ContactUser>> GetContactUsers(string userId);
+        Task<List<User>> GetUsers();
     }
 }
