@@ -56,6 +56,10 @@
               "target": "Package",
               "version": "[12.5.0, )"
             },
+            "HotChocolate.Data": {
+              "target": "Package",
+              "version": "[12.5.0, )"
+            },
             "HotChocolate.Data.EntityFramework": {
               "target": "Package",
               "version": "[12.4.1, )"

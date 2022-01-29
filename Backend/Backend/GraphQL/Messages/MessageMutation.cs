@@ -2,6 +2,7 @@
 using Backend.IRepository;
 using Backend.Models;
 using HotChocolate;
+using HotChocolate.Subscriptions;
 using HotChocolate.Types;
 using System;
 using System.Collections.Generic;
@@ -14,7 +15,8 @@ namespace Backend.GraphQL.Messages
     public class MessageMutation
     {
         public async Task<Message> CreateMessage(
-            AddMessagePayload messageInput, [Service] IMessageRepository messageRepository)
-            => await messageRepository.CreateMessage(messageInput);
+            AddMessagePayload messageInput, [Service] IMessageRepository messageRepository,
+            [Service] ITopicEventSender eventSender)
+            => await messageRepository.CreateMessage(messageInput, eventSender);
     }
 }

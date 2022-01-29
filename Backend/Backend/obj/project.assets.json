@@ -114,11 +114,11 @@
           "lib/net5.0/HotChocolate.AspNetCore.Authorization.dll": {}
         }
       },
-      "HotChocolate.Data/12.4.1": {
+      "HotChocolate.Data/12.5.0": {
         "type": "package",
         "dependencies": {
-          "HotChocolate.Execution": "12.4.1",
-          "HotChocolate.Types.CursorPagination": "12.4.1"
+          "HotChocolate.Execution": "12.5.0",
+          "HotChocolate.Types.CursorPagination": "12.5.0"
         },
         "compile": {
           "lib/net5.0/HotChocolate.Data.dll": {}
@@ -127,7 +127,8 @@
           "lib/net5.0/HotChocolate.Data.dll": {}
         },
         "build": {
-          "build/_._": {}
+          "build/HotChocolate.Data.props": {},
+          "build/HotChocolate.Data.targets": {}
         }
       },
       "HotChocolate.Data.EntityFramework/12.4.1": {
@@ -2041,10 +2042,10 @@
         "strawberryshake-signet.png"
       ]
     },
-    "HotChocolate.Data/12.4.1": {
-      "sha512": "3IIrFbgdpz6wBBk2hh9kK8jL4fKJ35Z8aAM9AiIFWfLm1kDTKp32wMq4j9k95SemAcNsNsGaSQhIc6fY1z8Spw==",
+    "HotChocolate.Data/12.5.0": {
+      "sha512": "2tIhow8R+ftrpijgMbDkFLrlfBk3UgoZ3lvlOxkMD6AWYh4uytGzc2srnY6YVc0A0o+UpZ71jQ8fPU/eUVBf5w==",
       "type": "package",
-      "path": "hotchocolate.data/12.4.1",
+      "path": "hotchocolate.data/12.5.0",
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
@@ -2053,7 +2054,7 @@
         "build/HotChocolate.Data.targets",
         "greendonut-signet.png",
         "hotchocolate-signet.png",
-        "hotchocolate.data.12.4.1.nupkg.sha512",
+        "hotchocolate.data.12.5.0.nupkg.sha512",
         "hotchocolate.data.nuspec",
         "lib/net5.0/HotChocolate.Data.dll",
         "lib/net5.0/HotChocolate.Data.xml",
@@ -6653,6 +6654,7 @@
       "GraphQL.Server.Ui.Voyager >= 5.2.0",
       "HotChocolate.AspNetCore >= 12.5.0",
       "HotChocolate.AspNetCore.Authorization >= 12.5.0",
+      "HotChocolate.Data >= 12.5.0",
       "HotChocolate.Data.EntityFramework >= 12.4.1",
       "Microsoft.AspNetCore.Authentication.JwtBearer >= 5.0.13",
       "Microsoft.EntityFrameworkCore.Design >= 5.0.13",
@@ -6713,6 +6715,10 @@
             "version": "[12.5.0, )"
           },
           "HotChocolate.AspNetCore.Authorization": {
+            "target": "Package",
+            "version": "[12.5.0, )"
+          },
+          "HotChocolate.Data": {
             "target": "Package",
             "version": "[12.5.0, )"
           },

@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "0vNOyI+BHMu2wdcvX6T7rdz2vMSL+vyJOIpiXSn9FR3paCzFEzx5SLCkRnJHi0YOJSn3+XyE5xMf4FK2jngjrQ==",
+  "dgSpecHash": "xuKLD/S2l4xqP4MYNSQCKLarC7E5tRyEqHnudKao8H56KKANYGk2mKHPuUI948JceTV4ZTXJfGVZ0/TPDRZGHA==",
   "success": true,
   "projectFilePath": "E:\\Chat App\\Backend\\Backend\\Backend.csproj",
   "expectedPackageFiles": [
@@ -12,7 +12,7 @@
     "C:\\Users\\APTS\\.nuget\\packages\\hotchocolate.abstractions\\12.5.0\\hotchocolate.abstractions.12.5.0.nupkg.sha512",
     "C:\\Users\\APTS\\.nuget\\packages\\hotchocolate.aspnetcore\\12.5.0\\hotchocolate.aspnetcore.12.5.0.nupkg.sha512",
     "C:\\Users\\APTS\\.nuget\\packages\\hotchocolate.aspnetcore.authorization\\12.5.0\\hotchocolate.aspnetcore.authorization.12.5.0.nupkg.sha512",
-    "C:\\Users\\APTS\\.nuget\\packages\\hotchocolate.data\\12.4.1\\hotchocolate.data.12.4.1.nupkg.sha512",
+    "C:\\Users\\APTS\\.nuget\\packages\\hotchocolate.data\\12.5.0\\hotchocolate.data.12.5.0.nupkg.sha512",
     "C:\\Users\\APTS\\.nuget\\packages\\hotchocolate.data.entityframework\\12.4.1\\hotchocolate.data.entityframework.12.4.1.nupkg.sha512",
     "C:\\Users\\APTS\\.nuget\\packages\\hotchocolate.execution\\12.5.0\\hotchocolate.execution.12.5.0.nupkg.sha512",
     "C:\\Users\\APTS\\.nuget\\packages\\hotchocolate.fetching\\12.5.0\\hotchocolate.fetching.12.5.0.nupkg.sha512",

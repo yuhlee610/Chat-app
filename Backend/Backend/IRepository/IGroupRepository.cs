@@ -10,7 +10,7 @@ namespace Backend.IRepository
 {
     public interface IGroupRepository
     {
-        Task<Group> CreateGroup(AddGroupPlayload groupInput, ITopicEventSender eventSender);
+        Task<ContactGroup> CreateGroup(AddGroupPlayload groupInput, ITopicEventSender eventSender);
         Task<List<ContactGroup>> GetContactGroups(string userId);
     }
 }

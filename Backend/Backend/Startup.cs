@@ -82,7 +82,9 @@ namespace Backend
                     .AddTypeExtension<MessageMutation>()
                 .AddSubscriptionType(d => d.Name("Subscription"))
                     .AddTypeExtension<GroupSubscription>()
+                    .AddTypeExtension<MessageSubscription>()
                 .AddFiltering()
+                .AddSorting()
                 .AddInMemorySubscriptions();
 
             services.AddAutoMapper(typeof(MapperInitializer));

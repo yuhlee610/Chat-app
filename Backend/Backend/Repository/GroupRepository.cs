@@ -24,9 +24,10 @@ namespace Backend.Repository
             _mapper = mapper;
             _contextFactory = contextFactory;
         }
-        public async Task<Group> CreateGroup(AddGroupPlayload groupInput, ITopicEventSender eventSender)
+        public async Task<ContactGroup> CreateGroup(
+            AddGroupPlayload groupInput, ITopicEventSender eventSender)
         {
-            using(ApplicationDbContext context = _contextFactory.CreateDbContext())
+            using (ApplicationDbContext context = _contextFactory.CreateDbContext())
             {
                 try
                 {
@@ -44,19 +45,26 @@ namespace Backend.Repository
                     await context.SaveChangesAsync();
 
                     var groupAdded = await context.Groups
-                        .Include("Host").Where(g => g.Id == groupAdd.Id)
+                        .Include("Host").Include("GroupUsers").Where(g => g.Id == groupAdd.Id)
                         .FirstOrDefaultAsync();
 
+                    ContactGroup newContactGroup = new ContactGroup
+                    {
+                        Group = groupAdded,
+                        LatestMessage = new Message { Content = "", Date = DateTime.UtcNow },
+                        numOfMembers = groupAdd.GroupUsers.Count
+                    };
+
                     string groupCreatedTopic = "";
-                    foreach(var id in groupInput.GroupUserIds)
+                    foreach (var id in groupInput.GroupUserIds)
                     {
                         groupCreatedTopic = $"{id}_{nameof(GraphQL.Groups.GroupSubscription.GroupCreated)}";
-                        eventSender.SendAsync(groupCreatedTopic, groupAdded);
+                        await eventSender.SendAsync(groupCreatedTopic, newContactGroup);
                     }
 
-                    return groupAdded;
+                    return newContactGroup;
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     throw new GraphQLException(new Error("Server errors", "SERVER_ERRORS"));
                 }
@@ -70,24 +78,24 @@ namespace Backend.Repository
                 try
                 {
                     List<ContactGroup> contactGroups = new List<ContactGroup>();
-                    List<Message> messageLatestGroup = await context.Messages
-                            .Where(m => m.Type == Models.Type.ToGroup && m.IsLatest == true &&
-                            m.ToGroup.GroupUsers.Contains(new GroupUser()
-                            {
-                                GroupId = m.ToGroupId,
-                                UserId = userId
-                            })).Include("ToGroup").Include(g => g.ToGroup.GroupUsers).OrderBy(m => m.Date).ToListAsync();
 
-                    foreach (var message in messageLatestGroup)
+                    List<Group> groups = await context.GroupUsers.Where(gu => gu.UserId == userId)
+                        .Select(gu => gu.Group).ToListAsync();
+
+                    foreach (Group group in groups)
                     {
-                        contactGroups.Add(new ContactGroup()
+                        Message latestMessageOfGroup = await context.Messages
+                                .Where(m => m.Type == Models.Type.ToGroup && m.IsLatest == true && m.ToGroupId == group.Id)
+                                .FirstOrDefaultAsync();
+                        contactGroups.Add(new ContactGroup
                         {
-                            Group = message.ToGroup,
-                            LatestMessage = message,
-                            numOfMembers = message.ToGroup.GroupUsers.Count
+                            Group = await context.Groups.Where(g => g.Id == group.Id).Include("Host").FirstOrDefaultAsync(),
+                            LatestMessage = latestMessageOfGroup != null ? latestMessageOfGroup : new Message { Content = "", Date = DateTime.UtcNow },
+                            numOfMembers = await context.GroupUsers.Where(gu => gu.GroupId == group.Id).CountAsync()
                         });
                     }
-                    return contactGroups;
+
+                    return contactGroups.OrderByDescending(cg => cg.LatestMessage.Date).ToList();
                 }
                 catch (Exception ex)
                 {

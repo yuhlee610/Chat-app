@@ -4,6 +4,7 @@ using Backend.DTOs;
 using Backend.IRepository;
 using Backend.Models;
 using HotChocolate;
+using HotChocolate.Subscriptions;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -23,7 +24,8 @@ namespace Backend.Repository
             _mapper = mapper;
             _contextFactory = contextFactory;
         }
-        public async Task<Message> CreateMessage(AddMessagePayload messageInput)
+        public async Task<Message> CreateMessage(
+            AddMessagePayload messageInput, ITopicEventSender eventSender)
         {
             using (ApplicationDbContext context = _contextFactory.CreateDbContext())
             {
@@ -43,7 +45,7 @@ namespace Backend.Repository
                             .Where(m => (m.ToGroupId == messageInput.GroupOrUserId &&
                             m.IsLatest == true))
                             .FirstOrDefaultAsync();
-                                            }
+                    }
                     else if (Models.Type.ToUser.CompareTo(messageInput.Type) == 0)
                     {
                         messageAdd.ToUserId = messageInput.GroupOrUserId;
@@ -54,20 +56,43 @@ namespace Backend.Repository
                             m.ToUserId == messageInput.GroupOrUserId) && m.IsLatest == true)
                             .FirstOrDefaultAsync();
                     }
-                    if(latestMessage != null)
+                    if (latestMessage != null)
                     {
                         latestMessage.IsLatest = false;
                         context.Messages.Update(latestMessage);
                     }
                     await context.Messages.AddAsync(messageAdd);
                     await context.SaveChangesAsync();
+
+                    if (Models.Type.ToUser.CompareTo(messageInput.Type) == 0)
+                    {
+                        await eventSender.SendAsync(
+                            $"{messageAdd.SendByUserId}_{nameof(GraphQL.Messages.MessageSubscription.MessageCreated)}",
+                            messageAdd);
+                        await eventSender.SendAsync(
+                            $"{messageAdd.ToUserId}_{nameof(GraphQL.Messages.MessageSubscription.MessageCreated)}",
+                            messageAdd);
+                    }
+                    else if (Models.Type.ToGroup.CompareTo(messageInput.Type) == 0)
+                    {
+                        var membersOfGroup = await context.GroupUsers
+                            .Where(gu => gu.GroupId == messageAdd.ToGroupId)
+                            .Select(gu => gu.UserId).ToListAsync();
+                        foreach (var userId in membersOfGroup)
+                        {
+                            await eventSender.SendAsync(
+                            $"{userId}_{nameof(GraphQL.Messages.MessageSubscription.MessageCreated)}",
+                            messageAdd);
+                        }
+                    }
+
                     return messageAdd;
                 }
                 catch (Exception ex)
                 {
                     throw new GraphQLException(new Error("Server errors", "SERVER_ERRORS"));
                 }
-            }            
+            }
         }
     }
 }

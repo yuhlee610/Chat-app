@@ -15,6 +15,7 @@ namespace Backend.GraphQL.Messages
     public class MessageQuery
     {
         [UseDbContext(typeof(ApplicationDbContext))]
+        [UseSorting]
         [UseFiltering]
         public IQueryable<Message> GetMessages(
             [ScopedService] ApplicationDbContext context)

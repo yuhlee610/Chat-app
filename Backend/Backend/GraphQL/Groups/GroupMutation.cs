@@ -14,7 +14,7 @@ namespace Backend.GraphQL.Groups
     [ExtendObjectType(Name = "Mutation")]
     public class GroupMutation
     {
-        public async Task<Group> CreateGroup(
+        public async Task<ContactGroup> CreateGroup(
             AddGroupPlayload groupInput, [Service] IGroupRepository groupRepository,
             [Service] ITopicEventSender eventSender)
             => await groupRepository.CreateGroup(groupInput, eventSender);
