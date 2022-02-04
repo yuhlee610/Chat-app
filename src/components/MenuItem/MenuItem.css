@@ -1,0 +1,30 @@
+.menu-item {
+  width: 64px;
+  height: 64px;
+  color: white;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  font-size: 24px;
+  cursor: pointer;
+  position: relative;
+}
+
+.menu-item:hover {
+  background-color: #40adff;
+}
+
+.menu-item.active {
+  background-color: #006edc;
+}
+
+.menu-item.active:hover {
+  background-color: #006edc;
+}
+/*# sourceMappingURL=MenuItem.css.map */

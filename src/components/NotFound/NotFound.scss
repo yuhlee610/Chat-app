@@ -1,0 +1,12 @@
+.not-found {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15px;
+    img {
+        width: 65%;
+    }
+    div {
+        color: #72808e;
+    }
+}

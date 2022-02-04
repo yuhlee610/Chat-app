@@ -1,0 +1,22 @@
+.not-found {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin-top: 15px;
+}
+
+.not-found img {
+  width: 65%;
+}
+
+.not-found div {
+  color: #72808e;
+}
+/*# sourceMappingURL=NotFound.css.map */

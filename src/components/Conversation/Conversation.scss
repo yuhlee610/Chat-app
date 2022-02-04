@@ -1,0 +1,108 @@
+@mixin tooltipStyle {
+  position: absolute;
+  background-color: #555;
+  padding: 6px 6px;
+  border-radius: 6px;
+  width: fit-content;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  color: white;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  min-width: max-content;
+}
+
+@mixin arrow($direction) {
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    @if ($direction == "left") {
+      right: 100%;
+      border-right: 5px solid #555;
+    } @else {
+      left: 100%;
+      border-left: 5px solid #555;
+    }
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    transform: translateY(-50%);
+  }
+}
+
+.messages {
+  height: 100%;
+  padding: 8px;
+  margin: 0;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: flex-start;
+  background: white;
+  overflow-y: scroll;
+  .no-message {
+    margin: auto;
+    font-size: 28px;
+    letter-spacing: 3px;
+    padding: 14px;
+    box-shadow: rgb(50 50 93 / 25%) 0px 30px 60px -12px, rgb(0 0 0 / 30%) 0px 18px 36px -18px;
+    border-radius: 15px;
+  }
+  li {
+    list-style-type: none;
+    margin: 2px 8px 2px 0;
+    float: left;
+    border-radius: 12px;
+    align-items: center;
+    color: black;
+    z-index: 1;
+    max-width: 70%;
+    display: flex;
+    .content {
+      background: #eee;
+      padding: 8px;
+      border-radius: 12px;
+      position: relative;
+      &:hover .tooltip-right {
+        opacity: 1;
+        visibility: visible;
+      }
+      .tooltip-right {
+        @include tooltipStyle();
+        left: 100%;
+        margin-left: 20px;
+        @include arrow("left");
+      }
+    }
+  }
+  li.mine {
+    margin: 2px 0 2px 8px;
+    align-self: flex-end;
+    z-index: 0;
+    padding: 8px;
+    color: white;
+    background-attachment: fixed;
+    background-color: rgb(240, 29, 106);
+    background-image: linear-gradient(
+      rgb(0, 153, 255) 0%,
+      rgb(160, 51, 255) 33%,
+      rgb(255, 82, 128) 66%,
+      rgb(255, 112, 97) 99%
+    );
+    .content {
+      background: transparent;
+      padding: 0;
+      &:hover .tooltip-left {
+        opacity: 1;
+        visibility: visible;
+      }
+      .tooltip-left {
+        right: 100%;
+        margin-right: 20px;
+        @include tooltipStyle();
+        @include arrow("right");
+      }
+    }
+  }
+}

@@ -1,0 +1,139 @@
+.messages {
+  height: 100%;
+  padding: 8px;
+  margin: 0;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: reverse;
+      -ms-flex-direction: column-reverse;
+          flex-direction: column-reverse;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  background: white;
+  overflow-y: scroll;
+}
+
+.messages li {
+  list-style-type: none;
+  margin: 2px 8px 2px 0;
+  float: left;
+  border-radius: 12px;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  color: black;
+  z-index: 1;
+  max-width: 70%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.messages li .content {
+  background: #eee;
+  padding: 8px;
+  border-radius: 12px;
+  position: relative;
+}
+
+.messages li .content:hover .tooltip-right {
+  opacity: 1;
+  visibility: visible;
+}
+
+.messages li .content .tooltip-right {
+  position: absolute;
+  background-color: #555;
+  padding: 6px 6px;
+  border-radius: 6px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  color: white;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  font-size: 14px;
+  min-width: -webkit-max-content;
+  min-width: -moz-max-content;
+  min-width: max-content;
+  left: 100%;
+  margin-left: 20px;
+}
+
+.messages li .content .tooltip-right::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  border-right: 5px solid #555;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+
+.messages li.mine {
+  margin: 2px 0 2px 8px;
+  -ms-flex-item-align: end;
+      align-self: flex-end;
+  z-index: 0;
+  padding: 8px;
+  color: white;
+  background-attachment: fixed;
+  background-color: #f01d6a;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#0099ff), color-stop(33%, #a033ff), color-stop(66%, #ff5280), color-stop(99%, #ff7061));
+  background-image: linear-gradient(#0099ff 0%, #a033ff 33%, #ff5280 66%, #ff7061 99%);
+}
+
+.messages li.mine .content {
+  background: transparent;
+  padding: 0;
+}
+
+.messages li.mine .content:hover .tooltip-left {
+  opacity: 1;
+  visibility: visible;
+}
+
+.messages li.mine .content .tooltip-left {
+  right: 100%;
+  margin-right: 20px;
+  position: absolute;
+  background-color: #555;
+  padding: 6px 6px;
+  border-radius: 6px;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  color: white;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  font-size: 14px;
+  min-width: -webkit-max-content;
+  min-width: -moz-max-content;
+  min-width: max-content;
+}
+
+.messages li.mine .content .tooltip-left::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 100%;
+  border-left: 5px solid #555;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+}
+/*# sourceMappingURL=Conversation.css.map */

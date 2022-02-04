@@ -1,0 +1,65 @@
+.modal {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: #f6f6f6ad;
+  -webkit-transition: all 1000s linear;
+  transition: all 1000s linear;
+}
+
+.modal .content {
+  -webkit-box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
+          box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 2px, rgba(0, 0, 0, 0.07) 0px 2px 4px, rgba(0, 0, 0, 0.07) 0px 4px 8px, rgba(0, 0, 0, 0.07) 0px 8px 16px, rgba(0, 0, 0, 0.07) 0px 16px 32px, rgba(0, 0, 0, 0.07) 0px 32px 64px;
+  background-color: white;
+  margin: 56px auto 0 auto;
+  width: 340px;
+  border-radius: 10px;
+  display: block;
+}
+
+.modal .content .title {
+  height: 60px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  position: relative;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin: 0 16px;
+}
+
+.modal .content .title span {
+  font-weight: 700;
+  font-size: 20px;
+}
+
+.modal .content .title span:last-child {
+  position: absolute;
+  border-radius: 50%;
+  background-color: #e4e6eb;
+  right: 0;
+  font-size: 30px;
+  width: 36px;
+  height: 36px;
+  text-align: center;
+  color: #6c727b;
+  line-height: 30px;
+  cursor: pointer;
+}
+
+.modal .content .title span:last-child:hover {
+  background-color: #d7dde2;
+}
+
+.modal .content .body {
+  border-top: 1px solid #e5e7ed;
+}
+/*# sourceMappingURL=Modal.css.map */

@@ -1,0 +1,72 @@
+.chat-header-horizontal {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  padding: 16px 16px;
+  -webkit-box-shadow: 0 3px 2px -2px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 3px 2px -2px rgba(0, 0, 0, 0.2);
+}
+
+.chat-header-horizontal .title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  margin: 0 12px;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+}
+
+.chat-header-horizontal .title div:first-child {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.chat-header-horizontal .title div:last-child {
+  color: #65676b;
+  font-size: 14px;
+}
+
+.chat-header-vertical {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 16px 16px 0 16px;
+}
+
+.chat-header-vertical .title {
+  margin-top: 12px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  text-align: center;
+}
+
+.chat-header-vertical .title div:first-child {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.chat-header-vertical .title div:last-child {
+  color: #65676b;
+  font-size: 14px;
+}
+/*# sourceMappingURL=ChatHeader.css.map */
