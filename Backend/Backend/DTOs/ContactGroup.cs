@@ -10,6 +10,6 @@ namespace Backend.DTOs
     {
         public Group Group { get; set; }
         public int numOfMembers { get; set; }
-        public Message LatestMessage { get; set; }
+        public Message? LatestMessage { get; set; }
     }
 }

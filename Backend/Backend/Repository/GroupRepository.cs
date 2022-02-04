@@ -24,6 +24,46 @@ namespace Backend.Repository
             _mapper = mapper;
             _contextFactory = contextFactory;
         }
+
+        public async Task<ContactGroup> AddMemberToGroup(List<string> userIds, string groupId, ITopicEventSender eventSender)
+        {
+            using (ApplicationDbContext context = _contextFactory.CreateDbContext())
+            {
+                try
+                {
+                    foreach (var id in userIds)
+                    {
+                        await context.GroupUsers.AddAsync(new GroupUser { GroupId = groupId, UserId = id });
+                    }
+                    await context.SaveChangesAsync();
+
+                    var latestMessage = await context.Messages
+                            .Where(m => m.ToGroupId == groupId && m.IsLatest == true).FirstOrDefaultAsync();
+                    ContactGroup updateContactGroup = new ContactGroup
+                    {
+                        Group = await context.Groups.Where(g => g.Id == groupId).Include("Host").Include(g => g.GroupUsers)
+                            .ThenInclude(gu => gu.User).FirstOrDefaultAsync(),
+                        numOfMembers = await context.GroupUsers.Where(gu => gu.GroupId == groupId).CountAsync(),
+                        LatestMessage = latestMessage != null ? latestMessage : new Message { Content = "", Date = DateTime.UtcNow }
+                    };
+
+                    foreach (var member in updateContactGroup.Group.GroupUsers)
+                    {
+                        var topic = $"{member.UserId}_{nameof(GraphQL.Groups.GroupSubscription.GroupAddMembers)}";
+                        await eventSender.SendAsync(topic, updateContactGroup);
+                    }
+
+                    await context.SaveChangesAsync();
+
+                    return updateContactGroup;
+                }
+                catch (Exception ex)
+                {
+                    throw new GraphQLException(new Error("Server errors", "SERVER_ERRORS"));
+                }
+            }
+        }
+
         public async Task<ContactGroup> CreateGroup(
             AddGroupPlayload groupInput, ITopicEventSender eventSender)
         {
@@ -45,12 +85,15 @@ namespace Backend.Repository
                     await context.SaveChangesAsync();
 
                     var groupAdded = await context.Groups
-                        .Include("Host").Include("GroupUsers").Where(g => g.Id == groupAdd.Id)
+                        .Include("Host").Include(g => g.GroupUsers).ThenInclude(gu => gu.User)
+
+                        .Where(g => g.Id == groupAdd.Id)
                         .FirstOrDefaultAsync();
 
                     ContactGroup newContactGroup = new ContactGroup
                     {
-                        Group = groupAdded,
+                        Group = await context.Groups.Where(g => g.Id == groupAdded.Id).Include("Host").Include(g => g.GroupUsers)
+                            .ThenInclude(gu => gu.User).FirstOrDefaultAsync(),
                         LatestMessage = new Message { Content = "", Date = DateTime.UtcNow },
                         numOfMembers = groupAdd.GroupUsers.Count
                     };
@@ -63,6 +106,42 @@ namespace Backend.Repository
                     }
 
                     return newContactGroup;
+                }
+                catch (Exception ex)
+                {
+                    throw new GraphQLException(new Error("Server errors", "SERVER_ERRORS"));
+                }
+            }
+        }
+
+        public async Task<ContactGroup> ExitGroup(string userId, string groupId, ITopicEventSender eventSender)
+        {
+            using (ApplicationDbContext context = _contextFactory.CreateDbContext())
+            {
+                try
+                {
+                    context.GroupUsers.Remove(new GroupUser { GroupId = groupId, UserId = userId });
+                    await context.SaveChangesAsync();
+                    var members = await context.GroupUsers.Where(gu => gu.GroupId == groupId)
+                        .Select(gu => gu.UserId).ToListAsync();
+
+                    var latestMessage = await context.Messages
+                            .Where(m => m.ToGroupId == groupId && m.IsLatest == true).FirstOrDefaultAsync();
+                    ContactGroup updateContactGroup = new ContactGroup
+                    {
+                        Group = await context.Groups.Where(g => g.Id == groupId).Include("Host").Include(g => g.GroupUsers)
+                            .ThenInclude(gu => gu.User).FirstOrDefaultAsync(),
+                        numOfMembers = await context.GroupUsers.Where(gu => gu.GroupId == groupId).CountAsync(),
+                        LatestMessage = latestMessage != null ? latestMessage : new Message { Content = "", Date = DateTime.UtcNow }
+                    };
+
+                    foreach (var id in members)
+                    {
+                        var topic = $"{id}_{nameof(GraphQL.Groups.GroupSubscription.GroupExited)}";
+                        await eventSender.SendAsync(topic, updateContactGroup);
+                    }
+
+                    return updateContactGroup;
                 }
                 catch (Exception ex)
                 {
@@ -89,13 +168,55 @@ namespace Backend.Repository
                                 .FirstOrDefaultAsync();
                         contactGroups.Add(new ContactGroup
                         {
-                            Group = await context.Groups.Where(g => g.Id == group.Id).Include("Host").FirstOrDefaultAsync(),
+                            Group = await context.Groups.Where(g => g.Id == group.Id)
+                            .Include("Host")
+                            .Include(g => g.GroupUsers).ThenInclude(gu => gu.User)
+                            .FirstOrDefaultAsync(),
                             LatestMessage = latestMessageOfGroup != null ? latestMessageOfGroup : new Message { Content = "", Date = DateTime.UtcNow },
                             numOfMembers = await context.GroupUsers.Where(gu => gu.GroupId == group.Id).CountAsync()
                         });
                     }
 
                     return contactGroups.OrderByDescending(cg => cg.LatestMessage.Date).ToList();
+                }
+                catch (Exception ex)
+                {
+                    throw new GraphQLException(new Error("Server errors", "SERVER_ERRORS"));
+                }
+            }
+        }
+
+        public async Task<ContactGroup> RemoveMembersFromGroup(List<string> userIds, string groupId, ITopicEventSender eventSender)
+        {
+            using (ApplicationDbContext context = _contextFactory.CreateDbContext())
+            {
+                try
+                {
+                    var tempIds = await context.GroupUsers.Where(gu => gu.GroupId == groupId).Select(gu => gu.UserId).ToListAsync();
+                    foreach (var id in userIds)
+                    {
+                        context.GroupUsers.Remove(new GroupUser { GroupId = groupId, UserId = id });
+                    }
+                    await context.SaveChangesAsync();
+
+                    var latestMessage = await context.Messages
+                            .Where(m => m.ToGroupId == groupId && m.IsLatest == true).FirstOrDefaultAsync();
+                    ContactGroup updateContactGroup = new ContactGroup
+                    {
+                        Group = await context.Groups.Where(g => g.Id == groupId).Include("Host")
+                            .Include(g => g.GroupUsers)
+                            .ThenInclude(gu => gu.User).FirstOrDefaultAsync(),
+                        numOfMembers = await context.GroupUsers.Where(gu => gu.GroupId == groupId).CountAsync(),
+                        LatestMessage = latestMessage != null ? latestMessage : new Message { Content = "", Date = DateTime.UtcNow } 
+                    };
+
+                    foreach (var id in tempIds)
+                    {
+                        var topic = $"{id}_{nameof(GraphQL.Groups.GroupSubscription.GroupRemoveMembers)}";
+                        await eventSender.SendAsync(topic, updateContactGroup);
+                    }
+
+                    return updateContactGroup;
                 }
                 catch (Exception ex)
                 {

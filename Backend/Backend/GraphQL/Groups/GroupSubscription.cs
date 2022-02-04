@@ -21,5 +21,29 @@ namespace Backend.GraphQL.Groups
             var topic = $"{id}_{nameof(GroupCreated)}";
             return receiver.SubscribeAsync<string, ContactGroup>(topic);
         }
+
+        [SubscribeAndResolve]
+        public ValueTask<ISourceStream<ContactGroup>> GroupExited(
+            string userId, [Service] ITopicEventReceiver receiver)
+        {
+            var topic = $"{userId}_{nameof(GroupExited)}";
+            return receiver.SubscribeAsync<string, ContactGroup>(topic);
+        }
+
+        [SubscribeAndResolve]
+        public ValueTask<ISourceStream<ContactGroup>> GroupAddMembers(
+            string userId, [Service] ITopicEventReceiver receiver)
+        {
+            var topic = $"{userId}_{nameof(GroupAddMembers)}";
+            return receiver.SubscribeAsync<string, ContactGroup>(topic);
+        }
+
+        [SubscribeAndResolve]
+        public ValueTask<ISourceStream<ContactGroup>> GroupRemoveMembers(
+            string userId, [Service] ITopicEventReceiver receiver)
+        {
+            var topic = $"{userId}_{nameof(GroupRemoveMembers)}";
+            return receiver.SubscribeAsync<string, ContactGroup>(topic);
+        }
     }
 }

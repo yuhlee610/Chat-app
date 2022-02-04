@@ -64,29 +64,32 @@ namespace Backend.Repository
                     await context.Messages.AddAsync(messageAdd);
                     await context.SaveChangesAsync();
 
+                    var messageCreate = await context.Messages.Where(m => m.Id == messageAdd.Id)
+                        .Include("SendByUser").Include("ToUser").Include("ToGroup").FirstOrDefaultAsync();
+
                     if (Models.Type.ToUser.CompareTo(messageInput.Type) == 0)
                     {
                         await eventSender.SendAsync(
-                            $"{messageAdd.SendByUserId}_{nameof(GraphQL.Messages.MessageSubscription.MessageCreated)}",
-                            messageAdd);
+                            $"{messageCreate.SendByUserId}_{nameof(GraphQL.Messages.MessageSubscription.MessageCreated)}",
+                            messageCreate);
                         await eventSender.SendAsync(
-                            $"{messageAdd.ToUserId}_{nameof(GraphQL.Messages.MessageSubscription.MessageCreated)}",
-                            messageAdd);
+                            $"{messageCreate.ToUserId}_{nameof(GraphQL.Messages.MessageSubscription.MessageCreated)}",
+                            messageCreate);
                     }
                     else if (Models.Type.ToGroup.CompareTo(messageInput.Type) == 0)
                     {
                         var membersOfGroup = await context.GroupUsers
-                            .Where(gu => gu.GroupId == messageAdd.ToGroupId)
+                            .Where(gu => gu.GroupId == messageCreate.ToGroupId)
                             .Select(gu => gu.UserId).ToListAsync();
                         foreach (var userId in membersOfGroup)
                         {
                             await eventSender.SendAsync(
                             $"{userId}_{nameof(GraphQL.Messages.MessageSubscription.MessageCreated)}",
-                            messageAdd);
+                            messageCreate);
                         }
                     }
 
-                    return messageAdd;
+                    return messageCreate;
                 }
                 catch (Exception ex)
                 {

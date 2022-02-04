@@ -12,5 +12,8 @@ namespace Backend.IRepository
     {
         Task<ContactGroup> CreateGroup(AddGroupPlayload groupInput, ITopicEventSender eventSender);
         Task<List<ContactGroup>> GetContactGroups(string userId);
+        Task<ContactGroup> ExitGroup(string userId, string groupId, ITopicEventSender eventSender);
+        Task<ContactGroup> AddMemberToGroup(List<string> userIds, string groupId, ITopicEventSender eventSender);
+        Task<ContactGroup> RemoveMembersFromGroup(List<string> userIds, string groupId, ITopicEventSender eventSender);
     }
 }
